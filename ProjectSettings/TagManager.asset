@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - wall
+  - Enemy
+  - MAP_OBJECT_WALLS
+  - MandalaBullet
+  - Bullet
   layers:
   - Default
   - TransparentFX
@@ -12,8 +16,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - MandalaBullet
+  - Bullet
   - 
   - 
   - 

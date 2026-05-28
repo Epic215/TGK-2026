@@ -12,6 +12,7 @@ public class PlayerController2 : MonoBehaviour
     private CharacterController cc;
     private float verticalVelocity;
     private PlayerShoot playerShoot;
+    private PlayerAbilities abilities;
 
     void Start()
     {
@@ -19,13 +20,17 @@ public class PlayerController2 : MonoBehaviour
         moveAction = playerInput.actions["Move"];
         cc = GetComponent<CharacterController>();
         playerShoot = GetComponent<PlayerShoot>();
+        abilities = GetComponent<PlayerAbilities>();
     }
 
     void Update()
     {
+        // Jeśli trwa dash — ruch obsługuje PlayerAbilities
+        if (abilities != null && abilities.IsDashing) return;
+
         // Grawitacja
         if (cc.isGrounded)
-            verticalVelocity = -2f; // trzyma przy ziemi
+            verticalVelocity = -2f;
         else
             verticalVelocity += gravity * Time.deltaTime;
 
@@ -34,7 +39,8 @@ public class PlayerController2 : MonoBehaviour
         Vector3 movement = new Vector3(input.x, 0f, input.y).normalized;
 
         // Obracaj w kierunku ruchu TYLKO gdy nie strzelasz
-        if (movement != Vector3.zero && !playerShoot.IsShooting)
+        bool isShooting = playerShoot != null && playerShoot.IsShooting;
+        if (movement != Vector3.zero && !isShooting)
         {
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
@@ -45,7 +51,6 @@ public class PlayerController2 : MonoBehaviour
 
         Vector3 velocity = movement * speed;
         velocity.y = verticalVelocity;
-
         cc.Move(velocity * Time.deltaTime);
     }
 }

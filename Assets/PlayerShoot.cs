@@ -3,69 +3,62 @@ using UnityEngine.InputSystem;
 
 public class PlayerShoot : MonoBehaviour
 {
-    public GameObject bulletPrefab;
-    public Transform firePoint;
-    public float bulletSpeed = 15f;
-    public float shootCooldown = 0.3f;
+    [SerializeField] private LayerMask groundMask;
 
+    private Camera mainCamera;
     private PlayerInput playerInput;
     private InputAction shootAction;
-    private float cooldownTimer;
 
-    public bool IsShooting { get; private set; } // PlayerController to odczyta
+    public bool IsShooting { get; private set; }
 
     private void Start()
     {
+        mainCamera = Camera.main;
         playerInput = GetComponent<PlayerInput>();
         shootAction = playerInput.actions["Shoot"];
     }
 
     private void Update()
     {
-        cooldownTimer -= Time.deltaTime;
-
-        // Czy przytrzymany przycisk strzelania
         IsShooting = shootAction.IsPressed();
 
         if (IsShooting)
             RotateTowardsCursor();
-
-        if (IsShooting && cooldownTimer <= 0f)
-        {
-            Shoot();
-            cooldownTimer = shootCooldown;
-        }
     }
 
     private void RotateTowardsCursor()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Mouse.current.position.ReadValue());
-        Plane groundPlane = new Plane(Vector3.up, transform.position);
-
-        if (groundPlane.Raycast(ray, out float distance))
+        var (success, position) = GetMousePosition();
+        if (success)
         {
-            Vector3 target = ray.GetPoint(distance);
-            Vector3 direction = target - transform.position;
-            direction.y = 0f;
-
+            var direction = position - transform.position;
+            direction.y = 0;
             if (direction != Vector3.zero)
-                transform.rotation = Quaternion.LookRotation(direction);
+                transform.forward = direction;
         }
     }
 
-    private void Shoot()
+    private (bool success, Vector3 position) GetMousePosition()
     {
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-        Rigidbody rb = bullet.GetComponent<Rigidbody>();
-        rb.linearVelocity = firePoint.forward * bulletSpeed;
-
-        // Ignoruj kolizję między pociskiem a graczem
-        Collider bulletCollider = bullet.GetComponent<Collider>();
-        Collider playerCollider = GetComponent<Collider>();
-        if (bulletCollider != null && playerCollider != null)
-            Physics.IgnoreCollision(bulletCollider, playerCollider);
-
-        Destroy(bullet, 3f);
+        var ray = mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        if (Physics.Raycast(ray, out var hitInfo, Mathf.Infinity, groundMask))
+            return (success: true, position: hitInfo.point);
+        else
+            return (success: false, position: Vector3.zero);
     }
-
 }
+
+//     private void Shoot()
+//     {
+//         GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+//         Rigidbody rb = bullet.GetComponent<Rigidbody>();
+//         rb.linearVelocity = firePoint.forward * bulletSpeed;
+
+//         Collider bulletCollider = bullet.GetComponent<Collider>();
+//         Collider playerCollider = GetComponent<Collider>();
+//         if (bulletCollider != null && playerCollider != null)
+//             Physics.IgnoreCollision(bulletCollider, playerCollider);
+
+//         Destroy(bullet, 3f);
+//     }
+// }
