@@ -18,10 +18,10 @@ Poniższy opis jest elastyczny: niektóre elementy są już zaimplementowane, in
 
 **Co jest charakterystyczne w tej wersji:**
 - Mag z animacjami (chód, atak, obrona) zamiast „sztywnej” postaci.
-- **System broni oparty na typach** (kula, kostury, miecz) z osobnymi umiejętnościami LPM/PPM — np. spread, chaos, leczenie, odnowa many, magiczna tarcza.
+- **System broni oparty na typach** (kula, kostury, miecz) z osobnymi umiejętnościami LPM/PPM — np. spread, chaos, serpentine, leczenie, odnowa many, magiczna tarcza, nova.
 - Nowy kod gry w folderze `Assets/Hexfire/` (gracz, broń, UI), obok starszego prototypu w `Assets/Scripts/`.
 
-**Stan projektu:** To **prototyp demonstracyjny**, nie pełna gra. Działa walka na jednej scenie (`SampleScene`); brakuje m.in. pełnej pętli game over z panelem retry/exit, dopracowanego pause menu oraz rozbudowy AI wrogów.
+**Stan projektu:** To **prototyp demonstracyjny**, nie pełna gra. Działa walka na jednej scenie (`SampleScene`). Do oddania zostają m.in. mapa, build `.exe`, screenshoty i linki do assetów (patrz **§9 TODO**).
 
 ---
 
@@ -61,16 +61,71 @@ Broń zdefiniowana jako **ScriptableObject** (`WeaponData` i klasy pochodne). Pr
 | Kostur 1 (rubinowy) | Spread — 3 pociski naraz (mana za cały strzał) | Odnowa many + efekt VFX |
 | Kostur 2 (szafirowy) | Chaos — seria pocisków pod losowym kątem | „Shotgun” — wiele pocisków (wysoki koszt MP) |
 | Miecz lodowy | Atak melee w zasięgu | Magiczna tarcza (i-frames + VFX) |
-| Kostur 3 (szmaragdowy) | *Planowany* | *Planowany* |
+| Kostur 3 (szmaragdowy) | Serpentine — dwa pociski wijące się naprzemiennie (10 MP) | Verdant Nova — pierścień 18 pocisków wokół gracza (30 MP, cd ~4,5 s) |
 
-Wzorce strzału (single / spread / chaos) nawiązują do wcześniejszego prototypu `PlayerInventory`.
+Wzorce strzału (single / spread / chaos / serpentine) nawiązują do wcześniejszego prototypu `PlayerInventory`.
 
 Pociski: prefaby z kolizją, obrażenia wrogów przez tag `Enemy` / komponenty zdrowia.
 
 ### Przeciwnicy i boss
-- **Wrogowie:** podstawowe AI (gonienie gracza, strzelanie — `EnemyController`, `EnemyHealth`). Na scenie kilka instancji `Enemy`.
-- **Boss:** osobny kontroler z fazami i wzorami ataków (`BossController`) — **najmocniejszy element starego prototypu**; dalsze poprawki planowane.
-- Rozbudowa zachowania wrogów (taktyka, lepsze unikanie pocisków) — **do zrobienia**.
+
+W projekcie współistnieją **dwa systemy AI** — starszy (na większości wrogów na scenie) i nowy Hexfire (gotowy kod + prefab, do rozszerzenia na mapę).
+
+#### Starszy system (`Assets/Scripts/`)
+
+Używany przez **większość wrogów** na `SampleScene`.
+
+| Skrypt | Rola |
+|--------|------|
+| `EnemyController` | Ruch + strzelanie |
+| `EnemyHealth` | HP, obrażenia, śmierć |
+| `BossController` | Boss — fazy, skoki, teleport, mandala, spirale |
+
+**Ruch (`EnemyController`):** `Chase` (gonienie z zigzagiem), `Stationary` (stoi), `Strafe` (ruch na boki wokół gracza).
+
+**Atak:** `Single` (pojedyncze pociski), `Burst` (seria pod kątem), `Spiral` (wir pocisków przez kilka sekund).
+
+Wrog szuka gracza po tagu `Player`, obraca się w jego stronę, strzela z `firePoint` prefabem `EnemyBullet`.
+
+#### Nowy system Hexfire (`Assets/Hexfire/Enemies/`)
+
+Modułowy kontroler do konfiguracji **per prefab** w Inspectorze — bez zmiany kodu.
+
+| Skrypt | Rola |
+|--------|------|
+| `HexfireEnemyController` | Ruch + wzorce ataku |
+| `HexfireEnemyBulletSpawner` | Spawn pocisków wroga |
+| `HexfireEnemyAnimator` | Animacje Haon (Ghost / Mimic / Chest Mimic) |
+| `HexfireBossController` | Rozbudowany boss (fazy, mandala, skoki) — **kod gotowy**, scena na razie używa starego `BossController` |
+
+**Tryby ruchu (`HexfireEnemyMoveMode`):**
+
+| Tryb | Zachowanie |
+|------|------------|
+| `Chase` | Gonienie gracza z lekkim zigzagiem bocznym |
+| `Stationary` | Bez ruchu (np. wieżyczka) |
+| `Strafe` | Ruch na boki + korekta dystansu |
+| `Retreat` | Cofa się, gdy gracz za blisko; podchodzi, gdy za daleko |
+| `Orbit` | Okrąża gracza |
+| `Kite` | Utrzymuje preferowany dystans (strzelanie z bezpiecznej odległości) |
+| `Charge` | Okresowy szarż na gracza |
+
+**Wzorce ataku (`HexfireEnemyAttackPattern`):** `Single`, `Burst`, `Spiral`, `Ring`, `Fan`, `Scatter`, `Cross`, `PulseRing`, `Alternating`, `Shotgun`, `Wave` — każdy z własnymi parametrami (cooldown, liczba pocisków, kąty itd.).
+
+**Dodatkowo:** przewidywanie ruchu gracza (`aimLeadStrength`), opcja zatrzymania ruchu podczas ataku (`freezeMovementWhileAttacking`), pasek HP nad głową (`EnemyCanvas`).
+
+**Prefab referencyjny:** `Assets/Hexfire/Enemies/Prefabs/EnemyNewFinal.prefab` (mimic-skrzynia + nowe skrypty). Na scenie jest **jedna** taka instancja; pozostałe wrogowie nadal na starym `EnemyController`.
+
+#### Boss i warunek wygranej
+
+- **Boss na scenie:** `BossController` (stary prototyp) — fazy zależne od HP, różne wzorce strzału.
+- **Wygrana:** komponent `WinOnDestroy` na bossie — po zniszczeniu pokazuje panel wygranej (`GameOverMenu` w trybie win).
+
+#### Co dalej z AI (opcjonalnie)
+
+- Podmiana pozostałych wrogów na prefaby z `HexfireEnemyController` (różne `moveMode` + `attackPattern` per typ).
+- Migracja bossa na `HexfireBossController`.
+- Unikanie pocisków gracza — **niezaimplementowane**.
 
 ### Interfejs (HUD)
 - Paski **HP** i **many** + tekst wartości.
@@ -80,8 +135,9 @@ Pociski: prefaby z kolizją, obrażenia wrogów przez tag `Enemy` / komponenty z
 
 ### Menu i pętla gry
 - **Menu główne** (`Menu` scena): start gry, wyjście (`MenuManager`).
-- **Pauza (ESC):** panel wstrzymania, wznowienie, powrót do menu (`PauseMenu`) — **do dopracowania wizualnie** (spójny styl z menu głównym, półprzezroczyste tło).
-- **Game Over:** po śmierci gracza obecnie tylko log w konsoli — **planowany panel** z animacją, przyciskami **Retry** (przeładowanie sceny) i **Exit** (menu), w stylu menu głównego z przyciemnionym tłem.
+- **Pauza (ESC):** panel wstrzymania, wznowienie, powrót do menu (`PauseMenu`) — działa na scenie; **do dopracowania wizualnie** (spójny styl z menu głównym).
+- **Game Over:** panel po śmierci gracza (`GameOverMenu`) — przyciemnione tło, **Retry** (przeładowanie sceny) i **Exit** (menu główne).
+- **Wygrana:** po zniszczeniu bossa (`WinOnDestroy`) — ten sam panel z komunikatem o wygranej.
 
 ### Sterowanie (skrót)
 
@@ -123,8 +179,6 @@ Większość grafiki, modeli, animacji, efektów i UI pochodzi z **Unity Asset S
 - **Grafika menu** — część elementów interfejsu / koncepcji menu wspierana generatywnie (AI) przy projektowaniu wyglądu.
 - **Logika gry** — **niewielki** udział AI przy pomocy w pisaniu i refaktoryzacji fragmentów kodu C# (system broni, HUD, setup gracza); ostateczna integracja, testy i decyzje projektowe — autor.
 
-Nie wykorzystano AI do: pełnej fabuły, muzyki, proceduralnej mapy ani uczenia maszynowego zachowania wrogów (AI przeciwników = klasyczne skrypty / maszyna stanów w kodzie).
-
 ---
 
 ## 6. Uruchomienie gry
@@ -157,7 +211,8 @@ Assets/Hexfire/
 ├── Core/          — wspólne interfejsy (np. IDamageable)
 ├── Player/        — ruch, dash, HP, mana, ekwipunek, prefab Player_Mage
 ├── Weapons/       — broń, pociski, pickupy, dane ScriptableObject
-├── UI/            — HUD, pasek broni, panel informacji
+├── Enemies/       — HexfireEnemyController, prefaby wrogów, animator
+├── UI/            — HUD, pasek broni, panel informacji, game over / win
 └── Editor/        — menu pomocnicze Hexfire (setup maga, animacje, materiały URP)
 
 Assets/Scripts/    — starszy prototyp (wrogowie, boss, menu, pauza, kamera)
@@ -165,4 +220,50 @@ Assets/Scripts/    — starszy prototyp (wrogowie, boss, menu, pauza, kamera)
 
 ---
 
-*Ostatnia aktualizacja dokumentacji: wersja prototypu po wdrożeniu systemu Hexfire (broń + HUD + mag).*
+## 9. TODO — stan projektu
+
+Lista kontrolna przed oddaniem. Mapę pomijasz — zajmiesz się nią sam.
+
+### Gotowe
+
+- [x] Mag — ruch WASD, celowanie myszą, dash z i-frames
+- [x] HP + mana + regeneracja many
+- [x] System broni (ScriptableObject): kula ognia, 3 kostury, miecz lodowy
+- [x] Sloty ekwipunku (3), podnoszenie `E`, przełączanie `1/2/3`
+- [x] HUD — paski HP/many, ring dasha, pasek broni, panel „i” z opisem LPM/PPM
+- [x] Menu główne (`Menu.unity`) + scena walki w Build Settings
+- [x] Pauza ESC (`PauseMenu`) — działa
+- [x] Game Over + Wygrana (`GameOverMenu`, `WinOnDestroy` na bossie)
+- [x] Gracz startuje z zieloną kulą ognia (`Player_Mage` → `startingWeapon`)
+- [x] Pickupy na scenie: Kostur 1, Kostur 2, miecz lodowy
+- [x] Boss ze starym `BossController` + warunek wygranej
+- [x] Wrogowie na scenie (stary `EnemyController`) + 1× `EnemyNewFinal` (nowe AI Hexfire)
+- [x] Kod nowego AI: `HexfireEnemyController` (7 trybów ruchu, 11 wzorców ataku)
+- [x] Kostur 3 — serpentine LPM + Verdant Nova PPM (asset + prefab pickup)
+- [x] Kolorowe pociski kosturów (pomarańcz / niebieski / zielony — odróżnione od `EnemyBullet`)
+- [x] README — opis mechaniki, broni, AI
+
+### Do zrobienia (Ty)
+
+- [ ] **Mapa / arena** — układ pokoi, rozmieszczenie wrogów i pickupów *(robisz sam)*
+- [ ] **Pickup Kostur 3** — `Staff03.prefab` nie jest jeszcze na `SampleScene` (trzeba położyć na mapie)
+- [ ] **Więcej wrogów Hexfire** — opcjonalnie zamiana starych `EnemyController` na prefaby z `HexfireEnemyController` (Ghost, Mimic itd.)
+- [ ] **Boss Hexfire** — opcjonalnie podmiana `BossController` → `HexfireBossController`
+- [ ] **Pauza** — dopracowanie wyglądu (spójność z menu głównym)
+- [ ] **Build Windows** — `.exe` + krótka instrukcja w §6
+- [ ] **Screenshoty** — §7 (walka, HUD, menu, boss)
+- [ ] **Linki Asset Store** — §4 (konkretne URLe pakietów)
+- [ ] **Git** — commit / push repozytorium (jeśli wymagane na zaliczenie)
+- [ ] **Bibliografia** — §8 (opcjonalnie)
+
+### Szybki test przed oddaniem
+
+1. `Menu.unity` → Start → gra ładuje `SampleScene`
+2. Walka: LPM/PPM każdej broni, dash, śmierć → Game Over → Retry / Exit
+3. Zabij bossa → panel wygranej
+4. ESC → pauza → wznowienie / menu
+5. Build `.exe` uruchamia się bez Unity
+
+---
+
+*Ostatnia aktualizacja dokumentacji: wersja prototypu po wdrożeniu systemu Hexfire (broń + HUD + mag + game over / win + kostur szmaragdowy + dokumentacja AI).*
