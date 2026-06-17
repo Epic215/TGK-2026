@@ -8,21 +8,25 @@ public class PlayerShoot : MonoBehaviour
     private Camera mainCamera;
     private PlayerInput playerInput;
     private InputAction shootAction;
+    private InputAction healAction;
 
     public bool IsShooting { get; private set; }
+    public bool IsHealing { get; private set; }
 
     private void Start()
     {
         mainCamera = Camera.main;
         playerInput = GetComponent<PlayerInput>();
         shootAction = playerInput.actions["Shoot"];
+        healAction = playerInput.actions.FindAction("Heal");
     }
 
     private void Update()
     {
         IsShooting = shootAction.IsPressed();
+        IsHealing = healAction != null && healAction.IsPressed();
 
-        if (IsShooting)
+        if (IsShooting || IsHealing)
             RotateTowardsCursor();
     }
 

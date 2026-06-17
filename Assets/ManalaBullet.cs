@@ -45,7 +45,13 @@ public class MandalaBullet : MonoBehaviour
         if (collision.gameObject.GetComponent<Bullet>() != null) return;
 
         if (hitTag == "Player")
+        {
+          var hexHealth = collision.gameObject.GetComponent<Hexfire.PlayerHealth>();
+          if (hexHealth != null)
+            hexHealth.TakeDamage(damage);
+          else
             collision.gameObject.GetComponent<PlayerHealth>()?.TakeDamage(damage);
+        }
         // else if (hitTag == "Enemy")
         //     collision.gameObject.GetComponent<EnemyHealth>()?.TakeDamage(damage);
 

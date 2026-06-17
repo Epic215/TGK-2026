@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 791584f08662dc444bdc56f253bea401
+labels:
+- MapGen
+timeCreated: 1509228416
+licenseType: Store
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 108237
+  packageName: MapGen
+  packageVersion: Beta 2.5
+  assetPath: Assets/MapGenerator/MapGen.unity
+  uploadId: 230959

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 0811bc15a735f944880025e4d16c8119
+timeCreated: 1514747207
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 108237
+  packageName: MapGen
+  packageVersion: Beta 2.5
+  assetPath: Assets/MapGenerator/Meshes/Floor.mat
+  uploadId: 230959

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 718a8c0341a6b744581a10dfd1105f88
+timeCreated: 1514747450
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 108237
+  packageName: MapGen
+  packageVersion: Beta 2.5
+  assetPath: Assets/MapGenerator/Prefab/Wall.prefab
+  uploadId: 230959

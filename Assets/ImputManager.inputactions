@@ -70,6 +70,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Heal",
+                    "type": "Button",
+                    "id": "b8c3d4e5-f6a7-8901-bcde-f12345678901",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Drop",
                     "type": "Button",
                     "id": "ed5094fd-c585-4594-8211-60d0a71f3a6b",
@@ -209,6 +218,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c9d4e5f6-a7b8-9012-cdef-123456789012",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Heal",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
