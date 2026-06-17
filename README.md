@@ -9,14 +9,14 @@ Poniższy opis jest elastyczny: niektóre elementy są już zaimplementowane, in
 
 **Tytuł roboczy:** Hexfire  
 
-**Koncepcja:** Prototyp **3D bullet hell / twin-stick shootera** z perspektywy **top-down**, w którym gracz wciela się w **maga**. Gra rozgrywa się na arenie z wrogami i bossem; celem runy jest przetrwanie i pokonanie przeciwników przy użyciu broni magicznych i uników.
+**Koncepcja:** Prototyp **3D bullet hell / twin-stick shootera** z perspektywy **top-down**, w którym gracz wciela się w **maga**. Gra rozgrywa się na w zamku z wrogami i bossem; celem jest przetrwanie i pokonanie przeciwników przy użyciu broni magicznych i uników. Koniec jest równoznaczny z pokonaniem wielkiego złotego mimick'a
 
 **Inspiracje:**
 - **Enter the Gungeon** — pętla walki w pokojach/arenie, zbieranie broni, dash z invincibility frames, czytelny HUD z slotami ekwipunku.
 - Ogólnie gatunek **roguelite / arena shooter** (szybka akcja, uniki, różne typy broni).
 - Estetyka magii i efektów VFX z pakietów Unity Asset Store (ogień, tarcze, pociski).
 
-**Co jest charakterystyczne w tej wersji:**
+**Co jest charakterystyczne tej grze:**
 - Mag z animacjami (chód, atak, obrona) zamiast „sztywnej” postaci.
 - **System broni oparty na typach** (kula, kostury, miecz) z osobnymi umiejętnościami LPM/PPM — np. spread, chaos, serpentine, leczenie, odnowa many, magiczna tarcza, nova.
 - Nowy kod gry w folderze `Assets/Hexfire/` (gracz, broń, UI), obok starszego prototypu w `Assets/Scripts/`.
@@ -158,7 +158,7 @@ Modułowy kontroler do konfiguracji **per prefab** w Inspectorze — bez zmiany 
 
 Większość grafiki, modeli, animacji, efektów i UI pochodzi z **Unity Asset Store** (oraz domyślnych zasobów Unity / TextMeshPro).
 
-**Źródła (szczegółowe linki — do uzupełnienia):**
+**Źródła (szczegółowe linki):**
 
 | Kategoria | Pakiet / folder w projekcie | Uwagi |
 |-----------|----------------------------|--------|
@@ -168,27 +168,26 @@ Większość grafiki, modeli, animacji, efektów i UI pochodzi z **Unity Asset S
 | Otoczenie / level kit | prefaby w scenie (`Wall`, `Corridor`, `EMPTY_SPACE`, itd.) | Zestawy z Asset Store / wcześniejszy import |
 | UI | własne prefaby w `Assets/Hexfire/UI/` + elementy z pakietów UI | Część layoutu budowana skryptami edytora |
 
-**Status modyfikacji:** assety głównie **zaimportowane**; część **zmodyfikowana** (materiały pod URP, prefaby broni/pickupów, przypisane skrypty Hexfire). Własne skrypty i konfiguracja broni — **autorskie**.
+Linki:
 
-*Lista linków do poszczególnych stron Asset Store zostanie dodana w kolejnej wersji dokumentu.*
+- [WizardPBR](https://assetstore.unity.com/packages/3d/characters/humanoids/fantasy/battle-wizard-pbr-127652)
+- [Haon](https://assetstore.unity.com/packages/3d/characters/creatures/haon-sd-creature-pack-311173)
+- [Ikony](https://assetstore.unity.com/packages/2d/gui/icons/pixel-art-icon-pack-rpg-158343)
+- [UI](https://assetstore.unity.com/packages/2d/gui/bloodlines-dark-ui-328721)
+- [Rózne biblioteki i assety](https://github.com/VuxDzung/SEP490_SU26_Unity/tree/main/Assets/3rdParty/VFX/Hovl%20Studio/Procedural%20fire)
 
 ---
 
 ## 5. Wykorzystanie AI
 
 - **Grafika menu** — część elementów interfejsu / koncepcji menu wspierana generatywnie (AI) przy projektowaniu wyglądu.
-- **Logika gry** — **niewielki** udział AI przy pomocy w pisaniu i refaktoryzacji fragmentów kodu C# (system broni, HUD, setup gracza); ostateczna integracja, testy i decyzje projektowe — autor.
+- **Logika gry** — **częściowy** udział AI przy pomocy w pisaniu i refaktoryzacji fragmentów kodu C# (system broni, HUD, setup gracza); ostateczna integracja, testy i decyzje projektowe — autor.
 
 ---
 
 ## 6. Uruchomienie gry
 
-*Sekcja do uzupełnienia przez autora (build wykonywalny + krótka instrukcja, jeśli potrzebna).*
-
-**Minimalnie z projektu Unity:**
-1. Unity Hub → projekt `TGK-2026` (Unity **6000.3.x** z modułem URP).
-2. Scena startowa menu: `Assets/Scenes/Menu.unity` (lub bezpośrednio `SampleScene.unity` do testów walki).
-3. Play w edytorze.
+Należy pobrać z release paczke gry Hellfire.zip. Zawartość należy wypakować oraz uruchomić Hellfire.exe. Po wystartowaniu należy wcisnąć start.
 
 ---
 
@@ -196,11 +195,6 @@ Większość grafiki, modeli, animacji, efektów i UI pochodzi z **Unity Asset S
 
 *Do uzupełnienia — jeden lub więcej reprezentatywnych screenshotów (walka, HUD, menu, boss).*
 
----
-
-## 8. Bibliografia
-
-*Opcjonalnie — do uzupełnienia, jeśli będą cytowane algorytmy lub źródła techniczne.*
 
 ---
 
@@ -217,53 +211,3 @@ Assets/Hexfire/
 
 Assets/Scripts/    — starszy prototyp (wrogowie, boss, menu, pauza, kamera)
 ```
-
----
-
-## 9. TODO — stan projektu
-
-Lista kontrolna przed oddaniem. Mapę pomijasz — zajmiesz się nią sam.
-
-### Gotowe
-
-- [x] Mag — ruch WASD, celowanie myszą, dash z i-frames
-- [x] HP + mana + regeneracja many
-- [x] System broni (ScriptableObject): kula ognia, 3 kostury, miecz lodowy
-- [x] Sloty ekwipunku (3), podnoszenie `E`, przełączanie `1/2/3`
-- [x] HUD — paski HP/many, ring dasha, pasek broni, panel „i” z opisem LPM/PPM
-- [x] Menu główne (`Menu.unity`) + scena walki w Build Settings
-- [x] Pauza ESC (`PauseMenu`) — działa
-- [x] Game Over + Wygrana (`GameOverMenu`, `WinOnDestroy` na bossie)
-- [x] Gracz startuje z zieloną kulą ognia (`Player_Mage` → `startingWeapon`)
-- [x] Pickupy na scenie: Kostur 1, Kostur 2, miecz lodowy
-- [x] Boss ze starym `BossController` + warunek wygranej
-- [x] Wrogowie na scenie (stary `EnemyController`) + 1× `EnemyNewFinal` (nowe AI Hexfire)
-- [x] Kod nowego AI: `HexfireEnemyController` (7 trybów ruchu, 11 wzorców ataku)
-- [x] Kostur 3 — serpentine LPM + Verdant Nova PPM (asset + prefab pickup)
-- [x] Kolorowe pociski kosturów (pomarańcz / niebieski / zielony — odróżnione od `EnemyBullet`)
-- [x] README — opis mechaniki, broni, AI
-
-### Do zrobienia (Ty)
-
-- [ ] **Mapa / arena** — układ pokoi, rozmieszczenie wrogów i pickupów *(robisz sam)*
-- [ ] **Pickup Kostur 3** — `Staff03.prefab` nie jest jeszcze na `SampleScene` (trzeba położyć na mapie)
-- [ ] **Więcej wrogów Hexfire** — opcjonalnie zamiana starych `EnemyController` na prefaby z `HexfireEnemyController` (Ghost, Mimic itd.)
-- [ ] **Boss Hexfire** — opcjonalnie podmiana `BossController` → `HexfireBossController`
-- [ ] **Pauza** — dopracowanie wyglądu (spójność z menu głównym)
-- [ ] **Build Windows** — `.exe` + krótka instrukcja w §6
-- [ ] **Screenshoty** — §7 (walka, HUD, menu, boss)
-- [ ] **Linki Asset Store** — §4 (konkretne URLe pakietów)
-- [ ] **Git** — commit / push repozytorium (jeśli wymagane na zaliczenie)
-- [ ] **Bibliografia** — §8 (opcjonalnie)
-
-### Szybki test przed oddaniem
-
-1. `Menu.unity` → Start → gra ładuje `SampleScene`
-2. Walka: LPM/PPM każdej broni, dash, śmierć → Game Over → Retry / Exit
-3. Zabij bossa → panel wygranej
-4. ESC → pauza → wznowienie / menu
-5. Build `.exe` uruchamia się bez Unity
-
----
-
-*Ostatnia aktualizacja dokumentacji: wersja prototypu po wdrożeniu systemu Hexfire (broń + HUD + mag + game over / win + kostur szmaragdowy + dokumentacja AI).*
