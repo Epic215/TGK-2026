@@ -35,6 +35,14 @@ namespace Hexfire.Weapons
     [Tooltip("Dodatkowy cooldown po calej serii chaos.")]
     public float chaosSeriesCooldown = 0.4f;
 
+    [Header("Serpentine (ROTMG — dwa węże na przemian)")]
+    [Tooltip("Ile pociskow na jeden strzal (2 = klasyczny serpentine).")]
+    public int serpentineProjectileCount = 2;
+    [Tooltip("Szerokosc wijania — predkosc boczna fali.")]
+    public float serpentineAmplitude = 3.5f;
+    [Tooltip("Czestotliwosc wijania (im wyzsza, tym czesciej skreca).")]
+    public float serpentineFrequency = 4.5f;
+
     public override float FireInterval
     {
       get
@@ -63,6 +71,10 @@ namespace Hexfire.Weapons
 
         case WeaponFirePattern.Chaos:
           FireChaos(context, baseDirection);
+          break;
+
+        case WeaponFirePattern.Serpentine:
+          FireSerpentine(context, baseDirection);
           break;
 
         default:
@@ -96,6 +108,29 @@ namespace Hexfire.Weapons
 
       for (int i = 0; i < spreadAngles.Length; i++)
         SpawnProjectileWithStats(context, baseDirection, spreadAngles[i], shotDamage, shotSpeed, shotLifetime);
+    }
+
+    void FireSerpentine(WeaponFireContext context, Vector3 baseDirection)
+    {
+      float shotDamage = GetDamage();
+      float shotSpeed = GetProjectileSpeed();
+      float shotLifetime = GetProjectileLifetime();
+      int count = Mathf.Max(2, serpentineProjectileCount);
+
+      for (int i = 0; i < count; i++)
+      {
+        float phase = (i & 1) == 0 ? 0f : Mathf.PI;
+        SpawnProjectileWithStats(
+          context,
+          baseDirection,
+          0f,
+          shotDamage,
+          shotSpeed,
+          shotLifetime,
+          serpentineAmplitude,
+          serpentineFrequency,
+          phase);
+      }
     }
 
     void FireChaos(WeaponFireContext context, Vector3 baseDirection)
@@ -159,7 +194,10 @@ namespace Hexfire.Weapons
       float angleOffset,
       float shotDamage,
       float shotSpeed,
-      float shotLifetime)
+      float shotLifetime,
+      float weaveAmplitude = 0f,
+      float weaveFrequency = 0f,
+      float weavePhase = 0f)
     {
       Vector3 direction = Quaternion.AngleAxis(angleOffset, Vector3.up) * baseDirection;
       if (direction.sqrMagnitude < 0.0001f)
@@ -167,7 +205,16 @@ namespace Hexfire.Weapons
 
       direction.Normalize();
       Vector3 spawnPosition = context.FirePoint.position + direction * spawnForwardOffset;
-      SpawnProjectileAt(context, spawnPosition, direction, shotDamage, shotSpeed, shotLifetime);
+      SpawnProjectileAt(
+        context,
+        spawnPosition,
+        direction,
+        shotDamage,
+        shotSpeed,
+        shotLifetime,
+        weaveAmplitude,
+        weaveFrequency,
+        weavePhase);
     }
 
     protected void SpawnProjectileAt(
@@ -176,7 +223,10 @@ namespace Hexfire.Weapons
       Vector3 direction,
       float shotDamage,
       float shotSpeed,
-      float shotLifetime)
+      float shotLifetime,
+      float weaveAmplitude = 0f,
+      float weaveFrequency = 0f,
+      float weavePhase = 0f)
     {
       if (projectilePrefab == null || direction.sqrMagnitude < 0.0001f)
         return;
@@ -203,7 +253,10 @@ namespace Hexfire.Weapons
           direction,
           shotLifetime,
           context.OwnerTag,
-          context.Shooter);
+          context.Shooter,
+          weaveAmplitude,
+          weaveFrequency,
+          weavePhase);
       }
     }
   }

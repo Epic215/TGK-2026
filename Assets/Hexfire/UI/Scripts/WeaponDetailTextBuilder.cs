@@ -64,6 +64,12 @@ namespace Hexfire.UI
           text.AppendLine($"  Kąt losowy: {staff.chaosAngleMin:0}° … {staff.chaosAngleMax:0}°");
         }
 
+        if (staff.firePattern == WeaponFirePattern.Serpentine)
+        {
+          text.AppendLine($"  Pociski: {staff.serpentineProjectileCount} (wijanie naprzemiennie)");
+          text.AppendLine($"  Szerokość fali: {staff.serpentineAmplitude:0.##}");
+        }
+
         text.AppendLine($"  Cooldown: {staff.FireInterval:0.##} s");
 
         if (staff.abilityType != StaffAbilityType.None)
@@ -140,6 +146,7 @@ namespace Hexfire.UI
       {
         WeaponFirePattern.Spread => "Rozproszenie (3 kule naraz)",
         WeaponFirePattern.Chaos => "Chaos (seria losowych)",
+        WeaponFirePattern.Serpentine => "Serpentine (dwa węże)",
         _ => "Pojedynczy"
       };
     }

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Weapon_Staff3
   m_EditorClassIdentifier: Assembly-CSharp::Hexfire.Weapons.StaffWeaponData
   weaponName: 4. Kostur Szmaragdowy
-  description: LPM wachlarz 5 odłamków (10 MP). PPM Verdant Nova — pierścień pocisków wokół gracza (30 MP).
+  description: "LPM dwa pociski wij\u0105ce si\u0119 naprzemiennie (10 MP). PPM Verdant
+    Nova \u2014 pier\u015Bcie\u0144 pocisk\xF3w wok\xF3\u0142 gracza (30 MP)."
   icon: {fileID: 21300000, guid: 213937202e13b1243a519b62290c0c6a, type: 3}
   damage: 11
   usesMana: 1
@@ -25,7 +26,7 @@ MonoBehaviour:
   heldLocalPosition: {x: 0, y: 0, z: 0}
   heldLocalEulerAngles: {x: 0, y: 0, z: 0}
   heldLocalScale: {x: 1, y: 1, z: 1}
-  firePattern: 1
+  firePattern: 3
   projectilePrefab: {fileID: 920000101, guid: 3c8600aea0f34af3be574fd6a4fea55b, type: 3}
   visualEffectPrefab: {fileID: 1518366863219760, guid: 3d35e81bdc5955041be098ef22e82a3b, type: 3}
   visualEffectScale: 0.28
@@ -34,16 +35,15 @@ MonoBehaviour:
   projectileLifetime: 5
   spawnForwardOffset: 0.6
   spreadAngles:
-  - -18
-  - -9
   - 0
-  - 9
-  - 18
   chaosProjectileCount: 5
   chaosAngleMin: -25
   chaosAngleMax: 25
   chaosShotDelay: 0.12
   chaosSeriesCooldown: 0.4
+  serpentineProjectileCount: 2
+  serpentineAmplitude: 1.5
+  serpentineFrequency: 8
   abilityType: 3
   abilityManaCost: 30
   abilityCooldown: 4.5

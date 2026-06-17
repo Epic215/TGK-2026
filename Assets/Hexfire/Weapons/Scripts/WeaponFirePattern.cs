@@ -7,6 +7,7 @@ namespace Hexfire.Weapons
   {
     Single,
     Spread,
-    Chaos
+    Chaos,
+    Serpentine
   }
 }

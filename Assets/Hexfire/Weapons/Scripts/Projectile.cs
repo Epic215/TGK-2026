@@ -17,6 +17,11 @@ namespace Hexfire.Weapons
     Transform shooter;
     Rigidbody body;
     bool initialized;
+    bool serpentineActive;
+    float serpentineAmplitude;
+    float serpentineFrequency;
+    float serpentinePhase;
+    float serpentineElapsed;
 
     static void ResolveLayers()
     {
@@ -61,7 +66,10 @@ namespace Hexfire.Weapons
       Vector3 direction,
       float lifeSeconds,
       string shooterTag,
-      Transform shooterTransform)
+      Transform shooterTransform,
+      float weaveAmplitude = 0f,
+      float weaveFrequency = 0f,
+      float weavePhase = 0f)
     {
       if (body == null)
         body = GetComponent<Rigidbody>();
@@ -72,6 +80,11 @@ namespace Hexfire.Weapons
       lifetime = lifeSeconds;
       ownerTag = shooterTag;
       shooter = shooterTransform;
+      serpentineAmplitude = weaveAmplitude;
+      serpentineFrequency = weaveFrequency;
+      serpentinePhase = weavePhase;
+      serpentineElapsed = 0f;
+      serpentineActive = weaveAmplitude > 0f && weaveFrequency > 0f;
       initialized = true;
 
       ApplyVelocity();
@@ -83,11 +96,30 @@ namespace Hexfire.Weapons
       if (!initialized || body == null || speed <= 0f)
         return;
 
-      Vector3 velocity = body.linearVelocity;
-      if (velocity.sqrMagnitude < 0.01f)
+      if (serpentineActive)
+      {
+        serpentineElapsed += Time.fixedDeltaTime;
+        Vector3 right = Vector3.Cross(Vector3.up, moveDirection);
+        if (right.sqrMagnitude < 0.0001f)
+          right = Vector3.right;
+        else
+          right.Normalize();
+
+        float lateral = serpentineAmplitude * serpentineFrequency
+          * Mathf.Cos(serpentineElapsed * serpentineFrequency + serpentinePhase);
+        Vector3 velocity = moveDirection * speed + right * lateral;
+        body.linearVelocity = velocity;
+
+        if (velocity.sqrMagnitude > 0.0001f)
+          transform.rotation = Quaternion.LookRotation(velocity.normalized);
+        return;
+      }
+
+      Vector3 straightVelocity = body.linearVelocity;
+      if (straightVelocity.sqrMagnitude < 0.01f)
         body.linearVelocity = moveDirection * speed;
       else
-        body.linearVelocity = velocity.normalized * speed;
+        body.linearVelocity = straightVelocity.normalized * speed;
     }
 
     void ApplyVelocity()
