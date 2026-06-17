@@ -6,7 +6,7 @@
 
 ## 1. O grze
 
-**Hexfire** to **3D twin-stick shooter** z widokiem **top-down**. Przemierzasz mroczne korytarze i sale zamku, unikasz gradu pocisków, zarządzasz maną i budujesz arsenał z trzech slotów broni. Każda broń ma osobny atak **LPM** i umiejętność **PPM**. Run kończy się zwycięstwem po pokonaniu bossa albo porażką, gdy zabraknie Ci życia.
+**Hexfire** to **3D twin-stick shooter** z widokiem **top-down**. Przemierzasz mroczne korytarze i sale zamku, unikasz gradu pocisków, zarządzasz maną i budujesz arsenał z trzech slotów broni. Każda broń ma osobny atak **LPM** i umiejętność **PPM**. Run kończy się zwycięstwem po pokonaniu **bossa wielkiego złotego mimika** albo porażką, gdy zabraknie Ci życia.
 
 **Inspiracje:** *Enter the Gungeon*, klasyczne arena shootery i bullet helle — szybka akcja, dash z krótką niewrażliwością, czytelny HUD.
 
@@ -167,6 +167,3 @@ Assets/Hexfire/     — gracz, broń, UI, rozszerzone AI, prefaby wrogów
 Assets/Scripts/     — AI podstawowe, boss, menu, pauza, kamera
 ```
 
----
-
-*Hexfire — przeżyj zamek. Pokonaj mimika.*
