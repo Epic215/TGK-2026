@@ -1,152 +1,105 @@
 # Hexfire
 
-Dokumentacja projektu gry — wersja prototypowa.  
-Poniższy opis jest elastyczny: niektóre elementy są już zaimplementowane, inne zaplanowane na kolejne iteracje.
+**Bullet hell w opuszczonym zamku.** Wcielasz się w maga, walczysz z duchami i mimikami, zbierasz magiczne bronie i stawiasz czoła wielkiemu złotemu mimikowi — strażnikowi ostatniej sali.
 
 ---
 
-## 1. Krótki opis gry
+## 1. O grze
 
-**Tytuł roboczy:** Hexfire  
+**Hexfire** to **3D twin-stick shooter** z widokiem **top-down**. Przemierzasz mroczne korytarze i sale zamku, unikasz gradu pocisków, zarządzasz maną i budujesz arsenał z trzech slotów broni. Każda broń ma osobny atak **LPM** i umiejętność **PPM**. Run kończy się zwycięstwem po pokonaniu bossa albo porażką, gdy zabraknie Ci życia.
 
-**Koncepcja:** Prototyp **3D bullet hell / twin-stick shootera** z perspektywy **top-down**, w którym gracz wciela się w **maga**. Gra rozgrywa się na w zamku z wrogami i bossem; celem jest przetrwanie i pokonanie przeciwników przy użyciu broni magicznych i uników. Koniec jest równoznaczny z pokonaniem wielkiego złotego mimick'a
+**Inspiracje:** *Enter the Gungeon*, klasyczne arena shootery i bullet helle — szybka akcja, dash z krótką niewrażliwością, czytelny HUD.
 
-**Inspiracje:**
-- **Enter the Gungeon** — pętla walki w pokojach/arenie, zbieranie broni, dash z invincibility frames, czytelny HUD z slotami ekwipunku.
-- Ogólnie gatunek **roguelite / arena shooter** (szybka akcja, uniki, różne typy broni).
-- Estetyka magii i efektów VFX z pakietów Unity Asset Store (ogień, tarcze, pociski).
-
-**Co jest charakterystyczne tej grze:**
-- Mag z animacjami (chód, atak, obrona) zamiast „sztywnej” postaci.
-- **System broni oparty na typach** (kula, kostury, miecz) z osobnymi umiejętnościami LPM/PPM — np. spread, chaos, serpentine, leczenie, odnowa many, magiczna tarcza, nova.
-- Nowy kod gry w folderze `Assets/Hexfire/` (gracz, broń, UI), obok starszego prototypu w `Assets/Scripts/`.
-
-**Stan projektu:** To **prototyp demonstracyjny**, nie pełna gra. Działa walka na jednej scenie (`SampleScene`). Do oddania zostają m.in. mapa, build `.exe`, screenshoty i linki do assetów (patrz **§9 TODO**).
+**Co wyróżnia Hexfire:**
+- Mag z pełnymi animacjami — chód, atak, obrona, śmierć.
+- **Pięć unikalnych broni** z odmienionymi wzorcami strzału: od prostej kuli ognia po serpentine i pierścień nova.
+- **Różnorodni przeciwnicy** — wiszące **duchy** i podstępne **mimiki** (w tym skrzynie-kreatury), każdy ze swoim stylem walki.
+- **Dwupoziomowe AI** — od prostych strzelców po zaawansowane wzorce ataku z okrążaniem, szarżami i wachlarzami pocisków.
+- **Boss** — wielki złoty mimik z fazami walki, skokami, teleportem i spiralami pocisków.
 
 ---
 
-## 2. Użyte narzędzia
+## 2. Świat i rozgrywka
 
-| Element | Wybór |
-|--------|--------|
-| Silnik | **Unity 6** (6000.3.11f1) |
-| Pipeline renderowania | **URP** (Universal Render Pipeline) |
-| Język skryptowy | **C#** |
-| System wejścia | **Unity Input System** (`InputSystem`) |
-| Edytor UI | Unity UI (uGUI) + **TextMeshPro** |
-| Platforma docelowa | **PC (Windows)** — projekt uruchamiany w edytorze Unity lub jako build `.exe` |
+### Zamek
+
+Gra rozgrywa się w **3D z perspektywy z góry** — widzisz korytarze, komnaty i przeciwników na planszy, jak w klasycznym bullet hellu. Kamera podąża za magiem; ściany zamku ograniczają pole walki i zmuszają do ruchu bokiem, cofania i precyzyjnych uników.
+
+### Mag — sterowanie i zasoby
+
+| Mechanika | Opis |
+|-----------|------|
+| Ruch | **WASD** |
+| Celowanie | Mysz — postać obraca się w stronę kursora |
+| Dash | **Spacja** — szybki przeskok z cooldownem i krótkimi **i-frames** |
+| HP | 100 punktów życia |
+| Mana | 100 punktów, regeneruje się w czasie |
+| Broń | 3 sloty — przełączanie **1 / 2 / 3**, podnoszenie z ziemi **E** |
+
+Startujesz z **zieloną kulą ognia**; po drodze znajdziesz kostury, miecz lodowy i inne pickupy ukryte w zamku.
 
 ---
 
-## 3. Opis mechaniki gry
+## 3. Broń
 
-### Świat i kamera
-- **2.5D / 3D top-down** — postacie i otoczenie w 3D, rozgrywka jak w strzelance z góry (brak swobodnej kamery FPS).
-- **Jedna arena / mapa ręczna** na scenie (ściany, korytarze, przestrzenie walki). Proceduralna mapa — **planowana**, niezaimplementowana.
-- Kamera podąża za graczem (skrypt `CameraFollow`).
-
-### Postać gracza (mag)
-- **Ruch:** WASD, `CharacterController`, grawitacja i przyciąganie do podłoża.
-- **Celowanie:** obrót w stronę kursora myszy.
-- **Dash (Spacja):** szybki przeskok z cooldownem; podczas dasha **i-frames** (krótka niewrażliwość na obrażenia).
-- **Atrybuty:** HP (domyślnie 100), mana (domyślnie 100, regeneracja w czasie).
-- **Ekwipunek:** 3 sloty broni; podnoszenie z mapy klawiszem **E**, przełączanie **1 / 2 / 3**.
-
-### System walki i bronie
-Broń zdefiniowana jako **ScriptableObject** (`WeaponData` i klasy pochodne). Przykładowe typy w prototypie:
+Każda broń to osobny zestaw umiejętności. Mana jest liczona za cały strzał lub za użycie PPM — zależnie od broni.
 
 | Broń | LPM | PPM |
 |------|-----|-----|
-| Zielona kula ognia | Pojedynczy pocisk (0 MP) | Leczenie (+HP, koszt many) |
-| Kostur 1 (rubinowy) | Spread — 3 pociski naraz (mana za cały strzał) | Odnowa many + efekt VFX |
-| Kostur 2 (szafirowy) | Chaos — seria pocisków pod losowym kątem | „Shotgun” — wiele pocisków (wysoki koszt MP) |
-| Miecz lodowy | Atak melee w zasięgu | Magiczna tarcza (i-frames + VFX) |
-| Kostur 3 (szmaragdowy) | Serpentine — dwa pociski wijące się naprzemiennie (10 MP) | Verdant Nova — pierścień 18 pocisków wokół gracza (30 MP, cd ~4,5 s) |
+| **Zielona kula ognia** | Pojedynczy pocisk (0 MP) | Leczenie — odzyskanie HP za manę |
+| **Kostur rubinowy** | Spread — 3 pociski naraz | Odnowa many + efekt VFX |
+| **Kostur szafirowy** | Chaos — seria losowych pocisków | Shotgun — gęsty wachlarz (wysoki koszt MP) |
+| **Miecz lodowy** | Cios mieczem w zasięgu | Magiczna tarcza — i-frames i aura ochronna |
+| **Kostur szmaragdowy** | Serpentine — dwa pociski wijące się naprzemiennie | Verdant Nova — pierścień 18 pocisków wokół gracza |
 
-Wzorce strzału (single / spread / chaos / serpentine) nawiązują do wcześniejszego prototypu `PlayerInventory`.
+Wzorce strzału gracza obejmują m.in. **single**, **spread**, **chaos** i **serpentine** — od precyzyjnych salw po chaotyczne i falujące ataki w stylu klasycznych bullet helli.
 
-Pociski: prefaby z kolizją, obrażenia wrogów przez tag `Enemy` / komponenty zdrowia.
+---
 
-### Przeciwnicy i boss
+## 4. Przeciwnicy
 
-W projekcie współistnieją **dwa systemy AI** — starszy (na większości wrogów na scenie) i nowy Hexfire (gotowy kod + prefab, do rozszerzenia na mapę).
+Zamek tętni życiem — i nie zawsze jest ono przyjazne. Na gracza czyhają dwa typy istot oraz boss.
 
-#### Starszy system (`Assets/Scripts/`)
+### Duchy
 
-Używany przez **większość wrogów** na `SampleScene`.
+Eteryczne wrogowie unoszące się nad podłożem. Atakują z dystansu, gonią maga po korytarzach lub utrzymują pozycję i zasypują gradem czerwonych pocisków. Dobrze sprawdzają się w ciasnych przejściach, gdzie trudniej o pełny unik.
 
-| Skrypt | Rola |
-|--------|------|
-| `EnemyController` | Ruch + strzelanie |
-| `EnemyHealth` | HP, obrażenia, śmierć |
-| `BossController` | Boss — fazy, skoki, teleport, mandala, spirale |
+### Mimiki
 
-**Ruch (`EnemyController`):** `Chase` (gonienie z zigzagiem), `Stationary` (stoi), `Strafe` (ruch na boki wokół gracza).
+Podstępne istoty udające skrzynie, beczki i zwykłe obiekty — gdy się zbliżysz, **otwierają paszczę i ostrzeliwują**. Wśród nich są zwykłe mimiki oraz **skrzynie-mimiki** z własnymi animacjami. Różnią się zachowaniem: jedne gonią, inne strzelają z miejsca lub manewrują na boki.
 
-**Atak:** `Single` (pojedyncze pociski), `Burst` (seria pod kątem), `Spiral` (wir pocisków przez kilka sekund).
+### Dwa poziomy sztucznej inteligencji
 
-Wrog szuka gracza po tagu `Player`, obraca się w jego stronę, strzela z `firePoint` prefabem `EnemyBullet`.
+| Poziom | Kto | Zachowanie |
+|--------|-----|------------|
+| **Podstawowy** | Większość duchów i mimików na mapie | Gonienie, strafe, pojedyncze strzały, seria (burst) lub spirala pocisków |
+| **Rozszerzony** | Wybrani przeciwnicy (m.in. zaawansowane mimiki) | Cofanie, okrążanie, szarże, utrzymywanie dystansu; ataki: pierścień, wachlarz, krzyż, fale, shotgun, pulsujące pierścienie — **11 wzorców** konfigurowanych per wróg |
 
-#### Nowy system Hexfire (`Assets/Hexfire/Enemies/`)
+Każdy wróg ma **pasek HP** nad głową. Silniejsze jednostki przewidują ruch gracza i łączą ruch z ostrzałem w złożone sekwencje.
 
-Modułowy kontroler do konfiguracji **per prefab** w Inspectorze — bez zmiany kodu.
+### Boss — wielki złoty mimik
 
-| Skrypt | Rola |
-|--------|------|
-| `HexfireEnemyController` | Ruch + wzorce ataku |
-| `HexfireEnemyBulletSpawner` | Spawn pocisków wroga |
-| `HexfireEnemyAnimator` | Animacje Haon (Ghost / Mimic / Chest Mimic) |
-| `HexfireBossController` | Rozbudowany boss (fazy, mandala, skoki) — **kod gotowy**, scena na razie używa starego `BossController` |
+Strażnik ostatniej komnaty. Walka toczy się w **fazach** — im mniej ma HP, tym agresywniej atakuje: skoki, teleport, mandala pocisków, spirale. Pokonanie bossa kończy grę zwycięstwem.
 
-**Tryby ruchu (`HexfireEnemyMoveMode`):**
+---
 
-| Tryb | Zachowanie |
-|------|------------|
-| `Chase` | Gonienie gracza z lekkim zigzagiem bocznym |
-| `Stationary` | Bez ruchu (np. wieżyczka) |
-| `Strafe` | Ruch na boki + korekta dystansu |
-| `Retreat` | Cofa się, gdy gracz za blisko; podchodzi, gdy za daleko |
-| `Orbit` | Okrąża gracza |
-| `Kite` | Utrzymuje preferowany dystans (strzelanie z bezpiecznej odległości) |
-| `Charge` | Okresowy szarż na gracza |
+## 5. Interfejs i pętla gry
 
-**Wzorce ataku (`HexfireEnemyAttackPattern`):** `Single`, `Burst`, `Spiral`, `Ring`, `Fan`, `Scatter`, `Cross`, `PulseRing`, `Alternating`, `Shotgun`, `Wave` — każdy z własnymi parametrami (cooldown, liczba pocisków, kąty itd.).
+- **HUD** — paski HP i many, ring cooldownu dasha, 3 sloty broni z ikonami.
+- **Panel „i”** — opis LPM/PPM aktywnej broni.
+- **Menu główne** — start, wyjście.
+- **Pauza (ESC)** — wznowienie lub powrót do menu.
+- **Game Over** — po śmierci: Retry (od nowa) lub Exit (menu).
+- **Wygrana** — po bossie: ekran zwycięstwa z tymi samymi opcjami.
 
-**Dodatkowo:** przewidywanie ruchu gracza (`aimLeadStrength`), opcja zatrzymania ruchu podczas ataku (`freezeMovementWhileAttacking`), pasek HP nad głową (`EnemyCanvas`).
-
-**Prefab referencyjny:** `Assets/Hexfire/Enemies/Prefabs/EnemyNewFinal.prefab` (mimic-skrzynia + nowe skrypty). Na scenie jest **jedna** taka instancja; pozostałe wrogowie nadal na starym `EnemyController`.
-
-#### Boss i warunek wygranej
-
-- **Boss na scenie:** `BossController` (stary prototyp) — fazy zależne od HP, różne wzorce strzału.
-- **Wygrana:** komponent `WinOnDestroy` na bossie — po zniszczeniu pokazuje panel wygranej (`GameOverMenu` w trybie win).
-
-#### Co dalej z AI (opcjonalnie)
-
-- Podmiana pozostałych wrogów na prefaby z `HexfireEnemyController` (różne `moveMode` + `attackPattern` per typ).
-- Migracja bossa na `HexfireBossController`.
-- Unikanie pocisków gracza — **niezaimplementowane**.
-
-### Interfejs (HUD)
-- Paski **HP** i **many** + tekst wartości.
-- **Ring cooldownu** dasha.
-- **Pasek 3 slotów** broni z ikonami; przycisk **„i”** z opisem LPM/PPM aktywnej broni.
-- Skrypty w `Assets/Hexfire/UI/` (`PlayerHudWire`, `EquipmentBarHud`, `WeaponInfoPanel`).
-
-### Menu i pętla gry
-- **Menu główne** (`Menu` scena): start gry, wyjście (`MenuManager`).
-- **Pauza (ESC):** panel wstrzymania, wznowienie, powrót do menu (`PauseMenu`) — działa na scenie; **do dopracowania wizualnie** (spójny styl z menu głównym).
-- **Game Over:** panel po śmierci gracza (`GameOverMenu`) — przyciemnione tło, **Retry** (przeładowanie sceny) i **Exit** (menu główne).
-- **Wygrana:** po zniszczeniu bossa (`WinOnDestroy`) — ten sam panel z komunikatem o wygranej.
-
-### Sterowanie (skrót)
+### Sterowanie — skrót
 
 | Akcja | Klawisz |
 |--------|---------|
 | Ruch | W A S D |
 | Celowanie | Mysz |
-| Atak / umiejętność LPM | Lewy przycisk myszy |
-| Umiejętność PPM | Prawy przycisk myszy |
+| Atak LPM | LPM |
+| Umiejętność PPM | PPM |
 | Dash | Spacja |
 | Slot broni | 1 / 2 / 3 |
 | Podnieś broń | E |
@@ -154,60 +107,66 @@ Modułowy kontroler do konfiguracji **per prefab** w Inspectorze — bez zmiany 
 
 ---
 
-## 4. Użyte assety
+## 6. Narzędzia
 
-Większość grafiki, modeli, animacji, efektów i UI pochodzi z **Unity Asset Store** (oraz domyślnych zasobów Unity / TextMeshPro).
-
-**Źródła (szczegółowe linki):**
-
-| Kategoria | Pakiet / folder w projekcie | Uwagi |
-|-----------|----------------------------|--------|
-| Postać maga | `WizardPBR` | Model, animacje, kostury |
-| Efekty magiczne | `Hovl Studio` (Magic effects pack, Procedural fire, itd.) | VFX, aury, tarcza |
-| Pociski / VFX | `Unique_Projectiles_Volume_2` | Cząsteczki pocisków (wymaga URP) |
-| Otoczenie / level kit | prefaby w scenie (`Wall`, `Corridor`, `EMPTY_SPACE`, itd.) | Zestawy z Asset Store / wcześniejszy import |
-| UI | własne prefaby w `Assets/Hexfire/UI/` + elementy z pakietów UI | Część layoutu budowana skryptami edytora |
-
-Linki:
-
-- [WizardPBR](https://assetstore.unity.com/packages/3d/characters/humanoids/fantasy/battle-wizard-pbr-127652)
-- [Haon](https://assetstore.unity.com/packages/3d/characters/creatures/haon-sd-creature-pack-311173)
-- [Ikony](https://assetstore.unity.com/packages/2d/gui/icons/pixel-art-icon-pack-rpg-158343)
-- [UI](https://assetstore.unity.com/packages/2d/gui/bloodlines-dark-ui-328721)
-- [Rózne biblioteki i assety](https://github.com/VuxDzung/SEP490_SU26_Unity/tree/main/Assets/3rdParty/VFX/Hovl%20Studio/Procedural%20fire)
+| Element | Wybór |
+|--------|--------|
+| Silnik | Unity 6 (6000.3.11f1) |
+| Renderowanie | URP |
+| Język | C# |
+| Wejście | Unity Input System |
+| UI | uGUI + TextMeshPro |
+| Platforma | PC (Windows) |
 
 ---
 
-## 5. Wykorzystanie AI
+## 7. Assety
 
-- **Grafika menu** — część elementów interfejsu / koncepcji menu wspierana generatywnie (AI) przy projektowaniu wyglądu.
-- **Logika gry** — **częściowy** udział AI przy pomocy w pisaniu i refaktoryzacji fragmentów kodu C# (system broni, HUD, setup gracza); ostateczna integracja, testy i decyzje projektowe — autor.
+Grafika, modele, animacje i efekty pochodzą głównie z **Unity Asset Store**, dopasowane do URP.
 
----
+| Kategoria | Pakiet |
+|-----------|--------|
+| Mag | [Battle Wizard PBR](https://assetstore.unity.com/packages/3d/characters/humanoids/fantasy/battle-wizard-pbr-127652) |
+| Duchy i mimiki | [Haon SD Creature Pack](https://assetstore.unity.com/packages/3d/characters/creatures/haon-sd-creature-pack-311173) |
+| Ikony broni | [Pixel Art Icon Pack RPG](https://assetstore.unity.com/packages/2d/gui/icons/pixel-art-icon-pack-rpg-158343) |
+| UI menu | [Bloodlines Dark UI](https://assetstore.unity.com/packages/2d/gui/bloodlines-dark-ui-328721) |
+| VFX | Hovl Studio, Unique Projectiles Vol. 2 |
 
-## 6. Uruchomienie gry
-
-Należy pobrać z release paczke gry Hellfire.zip. Zawartość należy wypakować oraz uruchomić Hellfire.exe. Po wystartowaniu należy wcisnąć start.
-
----
-
-## 7. Zrzuty ekranu
-
-*Do uzupełnienia — jeden lub więcej reprezentatywnych screenshotów (walka, HUD, menu, boss).*
-
+Modele przeciwników i animacje (duchy, mimiki, skrzynie) pochodzą z pakietu Haon. Skrypty gry, system broni, AI i HUD — **autorskie**.
 
 ---
 
-## Struktura kodu (skrót)
+## 8. Wykorzystanie AI (narzędzia generatywne)
+
+- **Grafika menu** — część elementów UI wspierana generatywnie przy projektowaniu wyglądu.
+- **Kod** — częściowa pomoc AI przy pisaniu i refaktoryzacji C# (broń, HUD, AI); integracja, balans i decyzje projektowe — autor.
+
+---
+
+## 9. Uruchomienie
+
+**Wersja do grania:** pobierz z release paczkę **Hellfire.zip**, wypakuj i uruchom **Hellfire.exe**, następnie wciśnij **Start**.
+
+**Z Unity (dla developerów):**
+1. Unity Hub → projekt `TGK-2026` (Unity 6000.3.x, URP).
+2. Scena menu: `Assets/Scenes/Menu.unity`.
+3. Play.
+
+---
+
+## 10. Zrzuty ekranu
+
+*Do uzupełnienia — walka z duchami, mimikami, boss i HUD.*
+
+---
+
+## Struktura projektu
 
 ```
-Assets/Hexfire/
-├── Core/          — wspólne interfejsy (np. IDamageable)
-├── Player/        — ruch, dash, HP, mana, ekwipunek, prefab Player_Mage
-├── Weapons/       — broń, pociski, pickupy, dane ScriptableObject
-├── Enemies/       — HexfireEnemyController, prefaby wrogów, animator
-├── UI/            — HUD, pasek broni, panel informacji, game over / win
-└── Editor/        — menu pomocnicze Hexfire (setup maga, animacje, materiały URP)
-
-Assets/Scripts/    — starszy prototyp (wrogowie, boss, menu, pauza, kamera)
+Assets/Hexfire/     — gracz, broń, UI, rozszerzone AI, prefaby wrogów
+Assets/Scripts/     — AI podstawowe, boss, menu, pauza, kamera
 ```
+
+---
+
+*Hexfire — przeżyj zamek. Pokonaj mimika.*
