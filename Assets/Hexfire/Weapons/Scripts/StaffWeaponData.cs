@@ -7,7 +7,8 @@ namespace Hexfire.Weapons
   {
     None,
     ManaRestore,
-    ShotgunChaos
+    ShotgunChaos,
+    RingNova
   }
 
   /// <summary>
@@ -47,6 +48,10 @@ namespace Hexfire.Weapons
     [Tooltip("Czas zycia pociskow umiejetnosci. 0 = projectileLifetime broni.")]
     public float abilityProjectileLifetime;
 
+    [Header("Ring Nova (PPM)")]
+    public int abilityRingBulletCount = 16;
+    public float abilityRingSpawnHeight = 0.85f;
+
     public bool TryUseAbility(Transform shooter, Transform castPoint, PlayerMana mana)
     {
       if (abilityType == StaffAbilityType.None || castPoint == null)
@@ -76,8 +81,49 @@ namespace Hexfire.Weapons
           FireShotgunAbility(context);
           return true;
 
+        case StaffAbilityType.RingNova:
+          if (abilityManaCost > 0f && (mana == null || !mana.TrySpend(abilityManaCost)))
+            return false;
+
+          var novaContext = new WeaponFireContext(
+            shooter,
+            castPoint,
+            castPoint != null ? castPoint.forward : Vector3.forward,
+            shooter != null ? shooter.tag : "Player");
+          FireRingNova(novaContext);
+          WeaponCastVfx.SpawnOnCharacter(
+            shooter,
+            abilityCastVfxPrefab,
+            abilityVfxLocalOffset,
+            abilityVfxScale,
+            abilityVfxDuration);
+          return true;
+
         default:
           return false;
+      }
+    }
+
+    void FireRingNova(WeaponFireContext context)
+    {
+      if (projectilePrefab == null)
+        return;
+
+      Transform shooter = context.Shooter;
+      Vector3 origin = shooter != null
+        ? shooter.position + Vector3.up * abilityRingSpawnHeight
+        : context.FirePoint.position;
+
+      float shotDamage = abilityDamage > 0f ? abilityDamage : damage;
+      float shotSpeed = abilityProjectileSpeed > 0f ? abilityProjectileSpeed : projectileSpeed;
+      float shotLifetime = abilityProjectileLifetime > 0f ? abilityProjectileLifetime : projectileLifetime;
+
+      int count = Mathf.Max(4, abilityRingBulletCount);
+      for (int i = 0; i < count; i++)
+      {
+        float angle = (360f / count) * i;
+        Vector3 dir = Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward;
+        SpawnProjectileAt(context, origin, dir, shotDamage, shotSpeed, shotLifetime);
       }
     }
 

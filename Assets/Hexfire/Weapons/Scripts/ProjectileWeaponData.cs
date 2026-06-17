@@ -162,7 +162,26 @@ namespace Hexfire.Weapons
       float shotLifetime)
     {
       Vector3 direction = Quaternion.AngleAxis(angleOffset, Vector3.up) * baseDirection;
+      if (direction.sqrMagnitude < 0.0001f)
+        return;
+
+      direction.Normalize();
       Vector3 spawnPosition = context.FirePoint.position + direction * spawnForwardOffset;
+      SpawnProjectileAt(context, spawnPosition, direction, shotDamage, shotSpeed, shotLifetime);
+    }
+
+    protected void SpawnProjectileAt(
+      WeaponFireContext context,
+      Vector3 spawnPosition,
+      Vector3 direction,
+      float shotDamage,
+      float shotSpeed,
+      float shotLifetime)
+    {
+      if (projectilePrefab == null || direction.sqrMagnitude < 0.0001f)
+        return;
+
+      direction.Normalize();
       Quaternion rotation = Quaternion.LookRotation(direction);
 
       GameObject projectileObject = Instantiate(projectilePrefab, spawnPosition, rotation);

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1271612027529412
+--- !u!1 &920000101
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,49 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4301105332486318}
-  - component: {fileID: 33081238511032874}
-  - component: {fileID: 23563132526701546}
-  - component: {fileID: -209016053621311967}
-  - component: {fileID: -3393425474005981161}
-  - component: {fileID: 1799247091552263485}
+  - component: {fileID: 920000102}
+  - component: {fileID: 920000106}
+  - component: {fileID: 920000105}
+  - component: {fileID: 920000103}
+  - component: {fileID: 920000104}
   m_Layer: 0
-  m_Name: Staff03
+  m_Name: Projectile_Emerald
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4301105332486318
+--- !u!4 &920000102
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1271612027529412}
+  m_GameObject: {fileID: 920000101}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0.93422556, y: 1.1551845, z: -0.025687363}
-  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &33081238511032874
+--- !u!33 &920000106
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1271612027529412}
-  m_Mesh: {fileID: 4300000, guid: a1f7c59c4079bab4ebc5a273be485ff0, type: 3}
---- !u!23 &23563132526701546
+  m_GameObject: {fileID: 920000101}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &920000105
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1271612027529412}
+  m_GameObject: {fileID: 920000101}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -69,7 +68,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c180393e839427341af7df7c9db0ebc1, type: 2}
+  - {fileID: 2100000, guid: 739c2b92f91f4df9a42011eb01c53bcc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -81,7 +80,7 @@ MeshRenderer:
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
+  m_StitchLightmapSeams: 1
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -93,13 +92,13 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!54 &-209016053621311967
+--- !u!54 &920000103
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1271612027529412}
+  m_GameObject: {fileID: 920000101}
   serializedVersion: 5
   m_Mass: 1
   m_LinearDamping: 0
@@ -115,45 +114,20 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!114 &-3393425474005981161
+  m_CollisionDetection: 2
+--- !u!114 &920000104
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1271612027529412}
+  m_GameObject: {fileID: 920000101}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aabf952fcc3a0ae46a17efec7a3e4190, type: 3}
+  m_Script: {fileID: 11500000, guid: d4489bf1306f290438781e5f47976c8b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Hexfire.Weapons.HexfireWeaponItem
-  weaponData: {fileID: 11400000, guid: 4143c01c62a632440b97e24945d9749c, type: 2}
-  pickupRadius: 2.5
-  pickupHintText: {fileID: 0}
-  highlightRenderers: []
---- !u!65 &1799247091552263485
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1271612027529412}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 15.561127, y: 233.40512, z: 80.12887}
-  m_Center: {x: 0.00000333786, y: -15.185791, z: 0.000007629396}
+  m_EditorClassIdentifier: Assembly-CSharp::Hexfire.Weapons.Projectile

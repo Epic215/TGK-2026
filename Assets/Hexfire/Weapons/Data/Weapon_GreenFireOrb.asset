@@ -30,7 +30,7 @@ MonoBehaviour:
   visualEffectScale: 0.3
   firePattern: 0
   fireRate: 1.25
-  projectileSpeed: 7
+  projectileSpeed: 12
   projectileLifetime: 4
   spawnForwardOffset: 0.6
   healManaCost: 40

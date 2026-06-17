@@ -11,9 +11,18 @@ namespace Hexfire.UI
   {
     const string BarObjectName = "EquipmentBar";
 
+#if UNITY_EDITOR
+    const string SlotSelectedSpritePath =
+      "Assets/Pixel_HUD_UI_FreeKit/Sprites/UI Elements/UI_Slot_Selected.png";
+#endif
+
     static readonly Color BarBackground = new Color(0.04f, 0.04f, 0.06f, 0.88f);
     static readonly Color FrameIdle = new Color(0.14f, 0.14f, 0.17f, 1f);
     static readonly Color FrameHighlight = new Color(1f, 1f, 1f, 0.95f);
+
+    [Header("Sloty")]
+    [Tooltip("Ramka aktywnego slotu (UI_Slot_Selected z Pixel HUD).")]
+    public Sprite slotSelectedSprite;
 
     [Header("Pozycja — widac od razu w edytorze")]
     public HudAnchorCorner anchorCorner = HudAnchorCorner.BottomLeft;
@@ -48,8 +57,27 @@ namespace Hexfire.UI
       if (autoBarSize)
         barSize = CalculateBarSize();
 
+      EnsureDefaultSlotSprites();
       HudEditorLayoutDefer.Schedule(this, RefreshLayout);
     }
+
+    void Awake()
+    {
+      EnsureDefaultSlotSprites();
+    }
+
+#if UNITY_EDITOR
+    void EnsureDefaultSlotSprites()
+    {
+      if (slotSelectedSprite == null)
+      {
+        slotSelectedSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>(
+          SlotSelectedSpritePath);
+      }
+    }
+#else
+    void EnsureDefaultSlotSprites() { }
+#endif
 
     void RefreshLayout()
     {
@@ -60,6 +88,14 @@ namespace Hexfire.UI
       ApplyAnchoring();
       UpdateSlotLayout();
       ConfigureIconImages();
+      ApplySlotFrameStyles();
+    }
+
+    void ApplySlotFrameStyles()
+    {
+      int active = equipment != null ? equipment.ActiveSlotIndex : 0;
+      for (int i = 0; i < 3; i++)
+        ApplyFrameHighlight(i, i == active);
     }
 
     void ConfigureIconImages()
@@ -75,6 +111,8 @@ namespace Hexfire.UI
     [ContextMenu("Zbuduj pasek ekwipunku")]
     public void BuildNow()
     {
+      EnsureDefaultSlotSprites();
+
       if (autoBarSize)
         barSize = CalculateBarSize();
 
@@ -302,15 +340,37 @@ namespace Hexfire.UI
       if (slotFrames[index] == null)
         return;
 
-      slotFrames[index].color = FrameIdle;
+      Image frame = slotFrames[index];
 
-      Outline outline = slotFrames[index].GetComponent<Outline>();
-      if (outline == null)
-        outline = slotFrames[index].gameObject.AddComponent<Outline>();
+      Outline outline = frame.GetComponent<Outline>();
+      if (outline != null)
+        outline.effectColor = Color.clear;
 
-      outline.effectColor = isActive ? FrameHighlight : Color.clear;
-      outline.effectDistance = new Vector2(2f, -2f);
-      outline.useGraphicAlpha = true;
+      if (isActive && slotSelectedSprite != null)
+      {
+        frame.sprite = slotSelectedSprite;
+        frame.type = Image.Type.Simple;
+        frame.preserveAspect = false;
+        frame.color = Color.white;
+        return;
+      }
+
+      ApplyHexfireIdleFrame(frame);
+
+      if (slotSelectedSprite == null)
+      {
+        if (outline == null)
+          outline = frame.gameObject.AddComponent<Outline>();
+
+        outline.effectColor = isActive ? FrameHighlight : Color.clear;
+        outline.effectDistance = new Vector2(2f, -2f);
+        outline.useGraphicAlpha = true;
+      }
+    }
+
+    static void ApplyHexfireIdleFrame(Image frame)
+    {
+      ManaBarVisuals.ApplyPanelColor(frame, FrameIdle);
     }
 
     void ApplyWeaponIcon(int index, WeaponData weapon)
@@ -374,7 +434,10 @@ namespace Hexfire.UI
 
       Image frameImage = frame.GetComponent<Image>();
       if (frameImage != null)
+      {
         slotFrames[index] = frameImage;
+        SetupSlotFrameImage(frameImage, false);
+      }
 
       ReparentKeyToFrame(index, column, frame);
 
@@ -535,7 +598,7 @@ namespace Hexfire.UI
       frameRect.anchoredPosition = Vector2.zero;
 
       Image frame = frameObject.GetComponent<Image>();
-      ManaBarVisuals.ApplyPanelColor(frame, FrameIdle);
+      SetupSlotFrameImage(frame, false);
       slotFrames[index] = frame;
 
       var keyObject = HudUiFactory.Create(
@@ -610,6 +673,25 @@ namespace Hexfire.UI
 
       target.font = source.font;
       target.fontSharedMaterial = source.fontSharedMaterial;
+    }
+
+    void SetupSlotFrameImage(Image frame, bool isActive)
+    {
+      if (frame == null)
+        return;
+
+      frame.raycastTarget = false;
+
+      if (isActive && slotSelectedSprite != null)
+      {
+        frame.sprite = slotSelectedSprite;
+        frame.type = Image.Type.Simple;
+        frame.preserveAspect = false;
+        frame.color = Color.white;
+        return;
+      }
+
+      ApplyHexfireIdleFrame(frame);
     }
   }
 }

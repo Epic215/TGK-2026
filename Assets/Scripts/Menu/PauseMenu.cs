@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Hexfire.UI;
 
 public class PauseMenu : MonoBehaviour
 {
@@ -7,6 +8,9 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
+        if (GameOverMenu.Instance != null && GameOverMenu.Instance.IsOpen)
+            return;
+
         if (UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             bool paused = !pausePanel.activeSelf;

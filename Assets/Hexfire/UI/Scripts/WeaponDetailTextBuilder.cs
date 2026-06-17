@@ -83,6 +83,14 @@ namespace Hexfire.UI
             text.AppendLine($"  Pociski: {staff.abilityShotgunCount}");
             text.AppendLine($"  Prędkość PPM: {abilitySpeed:0.##}");
           }
+          else if (staff.abilityType == StaffAbilityType.RingNova)
+          {
+            float abilitySpeed = staff.abilityProjectileSpeed > 0f
+              ? staff.abilityProjectileSpeed
+              : staff.projectileSpeed;
+            text.AppendLine($"  Pociski: {staff.abilityRingBulletCount} (360°)");
+            text.AppendLine($"  Prędkość PPM: {abilitySpeed:0.##}");
+          }
         }
 
         return text.ToString().TrimEnd();
@@ -121,6 +129,7 @@ namespace Hexfire.UI
       {
         StaffAbilityType.ManaRestore => "Odnowa many",
         StaffAbilityType.ShotgunChaos => "Shotgun chaos",
+        StaffAbilityType.RingNova => "Nova (pierścień)",
         _ => "—"
       };
     }

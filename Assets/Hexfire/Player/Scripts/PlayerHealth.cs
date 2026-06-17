@@ -92,8 +92,46 @@ namespace Hexfire
 
     void Die()
     {
-      Debug.Log("Player died!");
-      Destroy(gameObject);
+      if (isDead)
+        return;
+
+      isDead = true;
+      DisablePlayerControls();
+      PlayDeathAnimation();
+      GameOverMenu.Instance?.ShowGameOver();
+    }
+
+    bool isDead;
+
+    void DisablePlayerControls()
+    {
+      foreach (MonoBehaviour behaviour in GetComponents<MonoBehaviour>())
+      {
+        if (behaviour is PlayerHealth || behaviour is PlayerIFrameBridge)
+          continue;
+
+        behaviour.enabled = false;
+      }
+
+      CharacterController controller = GetComponent<CharacterController>();
+      if (controller != null)
+        controller.enabled = false;
+    }
+
+    void PlayDeathAnimation()
+    {
+      Animator animator = GetComponent<Animator>();
+      if (animator == null)
+        return;
+
+      foreach (AnimatorControllerParameter param in animator.parameters)
+      {
+        if (param.nameHash != Animator.StringToHash("Die"))
+          continue;
+
+        animator.SetTrigger("Die");
+        return;
+      }
     }
 
     void UpdateHud()

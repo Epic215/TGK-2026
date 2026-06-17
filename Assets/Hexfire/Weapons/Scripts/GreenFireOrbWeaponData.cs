@@ -65,7 +65,7 @@ namespace Hexfire.Weapons
       healRate = 1.25f;
       firePattern = WeaponFirePattern.Single;
       fireRate = 1.25f;
-      projectileSpeed = 5f;
+      projectileSpeed = 12f;
       projectileLifetime = 4f;
       visualEffectScale = 0.3f;
       heldLocalEulerAngles = new Vector3(90f, 90f, 90f);
