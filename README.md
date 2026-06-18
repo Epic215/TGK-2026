@@ -194,13 +194,31 @@ Pobierz z release paczkę **Hellfire.zip**. Wypakuj i uruchom **Hellfire.exe**, 
 
 ## 7. Zrzuty ekranu
 
-*Do uzupełnienia — walka, HUD, menu, duchy, mimiki, boss.*
+### Ekran główny
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/8a501f66-bdf5-4e70-861f-3a9ec0965441" />
 
----
+### HUD + Wyglad gry
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/6a98c545-adb8-4837-b006-9fb97bf645ab" />
 
-## 8. Bibliografia
+### Walka
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/f82fe85a-867d-425f-8377-f173eb3bf6f4" />
 
-*Opcjonalnie — do uzupełnienia.*
+### Opisy broni
+
+<img width="604" height="530" alt="image" src="https://github.com/user-attachments/assets/5a25d5c4-8fe9-4623-b60a-a5165294561b" />
+
+### Główny boss
+
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/f87f38df-b2af-4586-91d5-177968ea0d19" />
+
+### Ekran WIN
+
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/4cc10c71-b6e3-4bdf-bced-c566bda6a904" />
+
+
+
+
+
 
 ---
 
