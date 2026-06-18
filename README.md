@@ -228,3 +228,6 @@ Pobierz z release paczkę **Hellfire.zip**. Wypakuj i uruchom **Hellfire.exe**, 
 Assets/Hexfire/     — gracz, broń, UI, rozszerzone AI, prefaby wrogów
 Assets/Scripts/     — AI podstawowe, boss, menu, pauza, kamera
 ```
+---
+Link do repozytorium:
+https://github.com/Epic215/TGK-2026
